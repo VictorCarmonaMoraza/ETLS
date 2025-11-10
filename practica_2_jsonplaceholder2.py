@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from pendulum import interval
 from prefect import Flow, task
@@ -17,7 +18,10 @@ def extract():
     raw = requests.get("https://jsonplaceholder.typicode.com/posts/1")
     print("INFO: Código de estado de la respuesta: {}".format(raw.status_code))
     ##Formato JSON
-    raw = raw.json()
+    raw = json.loads(raw.text)
+    with open(".\\raw.json", "w", encoding='utf-8') as file:
+        # Escribimos el fichero raw enfile
+        json.dump(raw, file,ensure_ascii=False, indent=4)
     return raw
 
 # Transoformación de los datos (si es necesario)
@@ -25,6 +29,9 @@ def extract():
 def transform(raw):
     print("******INFO: Vamos a proceder con la tarea transform******")
     transformed = raw['title']
+    with open(".\\transformed.json", "w", encoding='utf-8') as file:
+        # Escribimos el fichero raw enfile
+        json.dump(transformed, file,ensure_ascii=False, indent=4)
     # En este caso no hacemos ninguna transformación
     return transformed
 
