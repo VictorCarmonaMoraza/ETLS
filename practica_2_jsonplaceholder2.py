@@ -9,24 +9,26 @@ from prefect.utilities.datetimes import retry_delay
 def extract():
     print("Vamos a obtener la respuesta de la API JSONPlaceholder")
     # Realizamos la peticion a la API
-    raw = requests.get("https://jsonplaceholder.typicode.com/posts")
+    raw = requests.get("https://jsonplaceholder.typicode.com/posts/1")
     print("INFO: Código de estado de la respuesta: {}".format(raw.status_code))
     ##Formato JSON
     raw = raw.json()
     return raw
 
-#Transoformación de los datos (si es necesario)
+
+# Transoformación de los datos (si es necesario)
 @task(log_stdout=True)
 def transform(raw):
-    print("INFO: Vamos a proceder con la tarea transform")
-    transformed = raw[0]['title']
+    print("******INFO: Vamos a proceder con la tarea transform******")
+    transformed = raw['title']
     # En este caso no hacemos ninguna transformación
     return transformed
+
 
 @task(log_stdout=True)
 def load(transformed):
     print()
-    print("INFO: Vm,aos a proceder con la tarea load")
+    print("**********INFO: Vamos a proceder con la tarea load*********")
     print("*****ATENCION****")
     print(str(transformed))
     print("*****Fin load*****")
