@@ -1,8 +1,13 @@
 import datetime
 
+from pendulum import interval
 from prefect import Flow, task
 import requests
 from prefect.utilities.datetimes import retry_delay
+from prefect.schedules import IntervalSchedule
+
+# Definimos un schedule que ejecuta el flujo cada 10 segundos
+schedule = IntervalSchedule(interval=datetime.timedelta(seconds=10))
 
 
 @task(log_stdout=True, max_retries=3, retry_delay=datetime.timedelta(seconds=10))
@@ -14,7 +19,6 @@ def extract():
     ##Formato JSON
     raw = raw.json()
     return raw
-
 
 # Transoformación de los datos (si es necesario)
 @task(log_stdout=True)
@@ -34,7 +38,7 @@ def load(transformed):
     print("*****Fin load*****")
 
 
-with Flow("P1.2 - JSONPlaceholder") as flow:
+with Flow("P1.2 - JSONPlaceholder",schedule) as flow:
     raw = extract()
     transform = transform(raw)
     load(transform)
